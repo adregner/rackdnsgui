@@ -62,7 +62,7 @@ class ZoneHandler(tornado.web.RequestHandler):
         email_address = self.get_cookie('rcloud_soa_email')
 
         # save the email address to be entered later
-        if self.get_argument('email'):
+        if self.get_argument('email', default=""):
             email_address = self.get_argument('email')
             self.set_cookie('rcloud_soa_email', email_address)
 
@@ -72,7 +72,20 @@ class ZoneHandler(tornado.web.RequestHandler):
             d_ttl = self.get_argument('ttl')
             conn.create_domain(d_name, d_ttl, email_address)
 
-        self.redirect('/%s' % "/".join(url)[1:])
+        elif url[1].isdigit():
+            # add a record
+            domain = conn.get_domain(int(url[1]))
+            r_name = self.get_argument('name')
+            r_type = self.get_argument('type')
+            r_data = self.get_argument('data')
+
+            # not yet supported by the clouddns API
+            #if r_type in ('MX', 'SRV'):
+            #    r_priority = self.get_argument('priority')
+
+            domain.create_record(r_name, r_data, r_type)
+
+        self.redirect('/zones%s' % "/".join(url))
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self, url):
