@@ -1,0 +1,25 @@
+<h1>Domains for {{ username }}:</h1>
+
+<table border="1">
+<tr>
+    <th>ID</th>
+    <th>Zone</th>
+    <th>updated</th>
+    <th>created</th>
+</tr>
+{% for d in domains %}
+    <tr>
+        <td><a href="/zones/{{ d['id'] }}">{{ d['id'] }}</a></td>
+        <td><a href="/zones/{{ d['id'] }}">{{ d['name'] }}</a></td>
+        <td>{{ d['updated'] }}</td>
+        <td>{{ d['created'] }}</td>
+    </tr>
+{% end %}
+</table>
+
+<form method="post" action="/zones">
+<p>
+    <label for="txt_zonename">Zone name: </label><input type="text" name="name" id="txt_zonename"/>
+    <input type="submit" value="Add new zone"/>
+</p>
+</form>

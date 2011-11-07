@@ -1,0 +1,22 @@
+----
+About
+----
+
+Author: Andrew Regner <andrew@aregner.com>
+Date: 2011/11/06
+Web URL: 
+Bugzilla URL: 
+
+----
+Description
+----
+
+A web interface to the Rackspace Cloud DNS infrastructure, based on the 
+offical python bindings to the API.
+
+----
+Dependencies
+----
+
+python-clouddns (imported as a submodule in the source repo)
+

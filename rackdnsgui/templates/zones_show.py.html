@@ -1,0 +1,37 @@
+<h1>Records for {{ domain.name }}:</h1>
+
+<table border="1">
+<tr>
+    <th>ID</th>
+    <th>Type</th>
+    <th>Name</th>
+    <th>Value</th>
+    <th>Extra</th>
+</tr>
+{% for r in records %}
+    <tr>
+        <td>{{ r['id'] }}</td>
+        <td>{{ r['type'] }}</td>
+        <td>{{ r['name'] }}</td>
+        <td>{{ r['data'] }}</td>
+        <td>TTL={{ r['ttl'] }}{% if r['type'] in ('MX', 'SRV') %}, Priority={{ r['priority'] }}{% end %}</td>
+    </tr>
+{% end %}
+</table>
+
+<form method="post" action="/zones/{{ domain.id }}">
+<p>
+    <label for="txt_recordname">Name: </label><input type="text" name="name" id="txt_recordname"/>
+    <label for="sel_recordtype">Type: </label><select name="type" id="sel_recordtype">
+        <option>A</option>
+        <option>AAAA</option>
+        <option>CNAME</option>
+        <option>MX</option>
+        <option>NS</option>
+        <option>TXT</option>
+        <option>SRV</option>
+    </select>
+    <label for="txt_recorddata">Data: </label><input type="text" name="data" id="txt_data"/>
+    <input type="submit" value="Add new record"/>
+</p>
+</form>
