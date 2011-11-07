@@ -37,18 +37,42 @@ class ZoneHandler(tornado.web.RequestHandler):
         
         username, key = self.get_secure_cookie('rcloud_login').split()
         conn = clouddns.connection.Connection(username, key)
+
+        email_address = self.get_cookie('rcloud_soa_email')
         
         if len(url) < 2 or not url[1]:
             self.redirect('/zones/list')
         
         elif url[1] == 'list':
             domains = conn.list_domains_info()
-            self.render('zones_list.py.html', domains=domains, username=username)
+            self.render('zones_list.py.html', domains=domains, username=username, email=email_address)
         
         elif url[1].isdigit():
             domain = conn.get_domain(int(url[1]))
             records = domain.list_records_info()
-            self.render('zones_show.py.html', domain=domain, records=records)
+            self.render('zones_show.py.html', domain=domain, records=records, email=email_address)
+
+    def post(self, url):
+        helpers.debug(__file__, url = url)
+        url = url.split('/')
+
+        username, key = self.get_secure_cookie('rcloud_login').split()
+        conn = clouddns.connection.Connection(username, key)
+
+        email_address = self.get_cookie('rcloud_soa_email')
+
+        # save the email address to be entered later
+        if self.get_argument('email'):
+            email_address = self.get_argument('email')
+            self.set_cookie('rcloud_soa_email', email_address)
+
+        if len(url) < 2 or not url[1]:
+            # add a zone
+            d_name = self.get_argument('name')
+            d_ttl = self.get_argument('ttl')
+            conn.create_domain(d_name, d_ttl, email_address)
+
+        self.redirect('/%s' % "/".join(url)[1:])
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self, url):

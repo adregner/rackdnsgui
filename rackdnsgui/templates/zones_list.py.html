@@ -19,7 +19,16 @@
 
 <form method="post" action="/zones">
 <p>
+    <label for="txt_email">Email address: </label><input type="text" name="email" id="txt_email" value="{{ email }}"/><br/>
+    <small>For the SOA record of this zone.</small>
+</p>
+<p>
+    <label for="txt_zonettl">Default TTL: </label><input type="text" name="ttl" id="txt_zonettl" value="300"/>
+</p>
+<p>
     <label for="txt_zonename">Zone name: </label><input type="text" name="name" id="txt_zonename"/>
+</p>
+<p>
     <input type="submit" value="Add new zone"/>
 </p>
 </form>
