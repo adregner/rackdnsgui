@@ -56,8 +56,24 @@ class LoginHandler(tornado.web.RequestHandler):
         
         if not url or len(url) < 2 or not url[1]:
             self.redirect('/login')
+        elif self.get_secure_cookie('rcloud_login'):
+            if self._verify_api_key():
+                self.redirect('/zones/list')
+            else:
+                self.render('login.py.html')
         else:
             self.render('login.py.html')
+
+    def _verify_api_key(self, username=None, key=None):
+        if not username or not key and self.get_secure_cookie('rcloud_login'):
+            username, key = self.get_secure_cookie('rcloud_login').split()
+
+        try:
+            conn = clouddns.connection.Connection(username, key)
+        except clouddns.errors.AuthenticationFailed:
+            return False
+
+        return True
         
     def post(self, url):
         helpers.debug(__file__, url = url)
@@ -66,15 +82,14 @@ class LoginHandler(tornado.web.RequestHandler):
         key = self.get_argument('key')
         
         # verify the login information
-        try:
-            conn = clouddns.connection.Connection(username, key)
-        except clouddns.errors.AuthenticationFailed:
+        if not self._verify_api_key(username, key):
             self.set_status(403)
             self.write("Bad username or API key.")
+            return
 
         # save it in a cookie on client
         self.set_secure_cookie('rcloud_login', "%s %s" % (username, key))
-        
+
         self.redirect('/zones/list')
 
 class NullHandler(tornado.web.RequestHandler):
