@@ -91,13 +91,16 @@ class LoginHandler(tornado.web.RequestHandler):
     def get(self, url):
         helpers.debug(__file__, url = url)
         
-        if not url or len(url) < 2 or not url[1]:
+        if not url:
             self.redirect('/login')
-        elif self.get_secure_cookie('rcloud_login'):
+        elif url == 'login' and self.get_secure_cookie('rcloud_login'):
             if self._verify_api_key():
                 self.redirect('/zones/list')
             else:
                 self.render('login.py.html')
+        elif url == 'logout':
+            self.clear_cookie('rcloud_login')
+            self.redirect('/login')
         else:
             self.render('login.py.html')
 

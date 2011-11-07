@@ -67,7 +67,7 @@ class RackDNSGuiApplication(object):
         }
         helpers.debug(__file__, repr(options))
         webapp = tornado.web.Application([
-            (r"/(login)?", handlers.LoginHandler),
+            (r"/(login|logout)?", handlers.LoginHandler),
             (r"/zones(.*)", handlers.ZoneHandler),
             ("/favicon.ico", handlers.NullHandler),
             ], **options)
