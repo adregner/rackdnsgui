@@ -21,7 +21,7 @@
 
 <form method="post" action="/zones">
 <p>
-    <label for="txt_email">Email address: </label><input type="text" name="email" id="txt_email" value="{{ email }}"/><br/>
+    <label for="txt_email">Email address: </label><input type="text" name="email" id="txt_email" value="{{ email or '' }}"/><br/>
     <small>For the SOA record of this zone.</small>
 </p>
 <p>
