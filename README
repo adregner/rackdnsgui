@@ -4,19 +4,19 @@ About
 
 Author: Andrew Regner <andrew@aregner.com>
 Date: 2011/11/06
-Web URL: 
-Bugzilla URL: 
+Web URL: https://github.com/adregner/rackdnsgui
 
 ----
 Description
 ----
 
 A web interface to the Rackspace Cloud DNS infrastructure, based on the 
-offical python bindings to the API.
+clouddns python bindings to the public API.
 
 ----
 Dependencies
 ----
 
-python-clouddns (imported as a submodule in the source repo)
+tornado >= 2.1.1 (python web framework, http://tornadoweb.org/)
+clouddns (imported as a submodule in the source repo)
 
