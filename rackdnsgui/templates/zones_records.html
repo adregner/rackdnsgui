@@ -1,0 +1,25 @@
+<h3>{{ types_label }}</h3>
+<table border="1">
+<tr>
+    <th>ID</th>
+    <th>Type</th>
+    <th>Name</th>
+    {% if 'MX' in types_label or 'SRV' in types_label %}
+    <th>Priority</th>
+    {% end %}
+    <th>Value</th>
+    <th>Comment</th>
+</tr>
+{% for r in records_of_type %}
+    <tr>
+        <td>{{ r['id'] }}</td>
+        <td>{{ r['type'] }}</td>
+        <td>{{ r['name'] }}</td>
+        {% if 'MX' in types_label or 'SRV' in types_label %}
+        <td>{{ r['priority'] }}</td>
+        {% end %}
+        <td>{{ r['data'] }}</td>
+        <td>{{ r['comment'] if 'comment' in r else '' }}</td>
+    </tr>
+{% end %}
+</table>

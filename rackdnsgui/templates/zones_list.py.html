@@ -6,6 +6,7 @@
 <tr>
     <th>ID</th>
     <th>Zone</th>
+    <th>Comment</th>
     <th>updated</th>
     <th>created</th>
 </tr>
@@ -13,6 +14,7 @@
     <tr>
         <td><a href="/zones/{{ d['id'] }}">{{ d['id'] }}</a></td>
         <td><a href="/zones/{{ d['id'] }}">{{ d['name'] }}</a></td>
+        <td>{{ d['comment'] if 'comment' in d else '' }}</td>
         <td>{{ d['updated'] }}</td>
         <td>{{ d['created'] }}</td>
     </tr>

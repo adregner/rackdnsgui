@@ -45,12 +45,44 @@ class ZoneHandler(tornado.web.RequestHandler):
         
         elif url[1] == 'list':
             domains = conn.list_domains_info()
-            self.render('zones_list.py.html', domains=domains, username=username, email=email_address)
+            tpl_args = {
+                    'domains': domains,
+                    'username': username,
+                    'email': email_address,
+                    }
+            self.render('zones_list.py.html', **tpl_args)
         
         elif url[1].isdigit():
             domain = conn.get_domain(int(url[1]))
             records = domain.list_records_info()
-            self.render('zones_show.py.html', domain=domain, records=records, email=email_address)
+
+            records_a_aaaa_cname = []
+            records_mx_srv = []
+            records_txt = []
+            records_ns = []
+
+            for r in records:
+                if r['type'] in ('A', 'AAAA', 'CNAME'):
+                    records_a_aaaa_cname.append(r)
+                elif r['type'] in ('MX', 'SRV'):
+                    records_mx_srv.append(r)
+                elif r['type'] in ('TXT',):
+                    records_txt.append(r)
+                elif r['type'] in ('NS',):
+                    records_ns.append(r)
+
+            tpl_args = {
+                    'domain': domain,
+                    'records': records,
+                    'email': email_address,
+                    'records_a_aaaa_cname': records_a_aaaa_cname,
+                    'records_mx_srv': records_mx_srv,
+                    'records_txt': records_txt,
+                    'records_ns': records_ns,
+                    }
+            print records
+
+            self.render('zones_show.py.html', **tpl_args)
 
     def post(self, url):
         helpers.debug(__file__, url = url)

@@ -2,24 +2,13 @@
 
 <p><a href="/zones/list">Back to zone list</a></p>
 
-<table border="1">
-<tr>
-    <th>ID</th>
-    <th>Type</th>
-    <th>Name</th>
-    <th>Value</th>
-    <th>Extra</th>
-</tr>
-{% for r in records %}
-    <tr>
-        <td>{{ r['id'] }}</td>
-        <td>{{ r['type'] }}</td>
-        <td>{{ r['name'] }}</td>
-        <td>{{ r['data'] }}</td>
-        <td>TTL={{ r['ttl'] }}{% if r['type'] in ('MX', 'SRV') %}, Priority={{ r['priority'] }}{% end %}</td>
-    </tr>
-{% end %}
-</table>
+{% module Template("zones_records.html", types_label="A, AAAA, CNAME", records_of_type=records_a_aaaa_cname) %}
+
+{% module Template("zones_records.html", types_label="MX, SRV", records_of_type=records_mx_srv) %}
+
+{% module Template("zones_records.html", types_label="TXT", records_of_type=records_txt) %}
+
+{% module Template("zones_records.html", types_label="NS", records_of_type=records_ns) %}
 
 <form method="post" action="/zones/{{ domain.id }}">
 <p>
