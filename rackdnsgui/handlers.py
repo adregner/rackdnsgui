@@ -40,9 +40,11 @@ class ZoneHandler(tornado.web.RequestHandler):
 
         email_address = self.get_cookie('rcloud_soa_email')
         
+        # root request
         if len(url) < 2 or not url[1]:
             self.redirect('/zones/list')
         
+        # SHOW ZONES
         elif url[1] == 'list':
             domains = conn.list_domains_info()
             tpl_args = {
@@ -52,6 +54,18 @@ class ZoneHandler(tornado.web.RequestHandler):
                     }
             self.render('zones_list.py.html', **tpl_args)
         
+        # EDIT RECORD
+        elif len(url) > 2 and url[1].isdigit():
+            domain = conn.get_domain(int(url[1]))
+            record = domain.get_record(url[2])
+            
+            tpl_args = {
+                    'domain': domain,
+                    'record': record,
+                    }
+            self.render('record_show.py.html', **tpl_args)
+
+        # EDIT ZONE (SHOW RECORDS)
         elif url[1].isdigit():
             domain = conn.get_domain(int(url[1]))
             records = domain.list_records_info()
@@ -80,7 +94,6 @@ class ZoneHandler(tornado.web.RequestHandler):
                     'records_txt': records_txt,
                     'records_ns': records_ns,
                     }
-            print records
 
             self.render('zones_show.py.html', **tpl_args)
 
@@ -104,18 +117,46 @@ class ZoneHandler(tornado.web.RequestHandler):
             d_ttl = self.get_argument('ttl')
             conn.create_domain(d_name, d_ttl, email_address)
 
-        elif url[1].isdigit():
-            # add a record
+        elif len(url) > 2 and url[1].isdigit():
+            # edit a record
             domain = conn.get_domain(int(url[1]))
-            r_name = self.get_argument('name')
-            r_type = self.get_argument('type')
-            r_data = self.get_argument('data')
+            record = domain.get_record(url[2])
 
-            # not yet supported by the clouddns API
-            #if r_type in ('MX', 'SRV'):
-            #    r_priority = self.get_argument('priority')
+            r = {}
+            r['name'] = self.get_argument('name', None)
+            r['data'] = self.get_argument('data', None)
+            r['ttl'] = self.get_argument('ttl', None)
+            r['comment'] = self.get_argument('comment', None)
 
-            domain.create_record(r_name, r_data, r_type)
+            if record.type in ('MX', 'SRV'):
+                r['priority'] = self.get_argument('priority', None)
+
+            # unset things that don't change
+            for field in r.keys():
+                cur_val = record.__dict__[field]
+                if cur_val and r[field] == cur_val:
+                    del r[field]
+
+            record.update(**r)
+
+            # we don't want to go back to the same edit record page
+            del url[2]
+
+        elif url[1].isdigit():
+            # add a record (edit a zone not really applicable?)
+            domain = conn.get_domain(int(url[1]))
+
+            r = {}
+            r['name'] = self.get_argument('name')
+            r['type'] = self.get_argument('type')
+            r['data'] = self.get_argument('data')
+            r['ttl'] = self.get_argument('ttl', None)
+            r['comment'] = self.get_argument('comment', None)
+
+            if r['type'] in ('MX', 'SRV'):
+                r['priority'] = self.get_argument('priority', None)
+
+            domain.create_record(**r)
 
         self.redirect('/zones%s' % "/".join(url))
 

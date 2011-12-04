@@ -12,7 +12,7 @@
 </tr>
 {% for r in records_of_type %}
     <tr>
-        <td>{{ r['id'] }}</td>
+        <td><a href="/zones/{{ domain.id }}/{{ r['id'] }}">{{ r['id'] }}</a></td>
         <td>{{ r['type'] }}</td>
         <td>{{ r['name'] }}</td>
         {% if 'MX' in types_label or 'SRV' in types_label %}

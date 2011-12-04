@@ -1,14 +1,28 @@
+<script type="text/javascript">
+window.onload = function() {
+    document.getElementById("sel_recordtype").onchange = function() {
+        var type = event.target.value;
+        if(type == 'MX' || type == 'SRV') {
+            document.getElementById("span_priority").style.display = 'inline';
+        }
+        else {
+            document.getElementById("span_priority").style.display = 'none';
+        }
+    };
+};
+</script>
+
 <h1>Records for {{ domain.name }}:</h1>
 
 <p><a href="/zones/list">Back to zone list</a></p>
 
-{% module Template("zones_records.html", types_label="A, AAAA, CNAME", records_of_type=records_a_aaaa_cname) %}
+{% module Template("zones_records.html", types_label="A, AAAA, CNAME", records_of_type=records_a_aaaa_cname, domain=domain) %}
 
-{% module Template("zones_records.html", types_label="MX, SRV", records_of_type=records_mx_srv) %}
+{% module Template("zones_records.html", types_label="MX, SRV", records_of_type=records_mx_srv, domain=domain) %}
 
-{% module Template("zones_records.html", types_label="TXT", records_of_type=records_txt) %}
+{% module Template("zones_records.html", types_label="TXT", records_of_type=records_txt, domain=domain) %}
 
-{% module Template("zones_records.html", types_label="NS", records_of_type=records_ns) %}
+{% module Template("zones_records.html", types_label="NS", records_of_type=records_ns, domain=domain) %}
 
 <form method="post" action="/zones/{{ domain.id }}">
 <p>
@@ -22,7 +36,9 @@
         <option>TXT</option>
         <option>SRV</option>
     </select>
-    <label for="txt_recorddata">Data: </label><input type="text" name="data" id="txt_data"/>
+    <span id="span_priority" style="display:none"><label for="txt_recordpriority">Priority: </label><input type="text" name="priority" id="txt_recordpriority"/></span>
+    <label for="txt_recorddata">Data: </label><input type="text" name="data" id="txt_recorddata"/>
+    <label for="txt_recordcomment">Comment: </label><input type="text" name="comment" id="txt_recordcomment"/>
     <input type="submit" value="Add new record"/>
 </p>
 </form>
